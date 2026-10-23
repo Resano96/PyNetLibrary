@@ -91,6 +91,17 @@ if fresh.Select():                         # False = deleted / not found
     ...
 ```
 
+✅ With `model.GetIdentifierByGUID(guid)` (Tekla 2026): for a **deleted** object the lookup returns an
+Identifier with `ID == 0`, and `Select()` on it **raises** `ArgumentException: Identifier not valid`
+instead of returning `False`. Check `ID` first (or wrap `Select()` in try/except):
+
+```python
+ident = model.GetIdentifierByGUID(guid)
+fresh = Beam()
+fresh.Identifier = ident
+alive = ident.ID != 0 and fresh.Select()
+```
+
 After `Modify()` the Python object already holds the new state; after **another** script or the
 user changed it, call `Select()` again to refresh.
 
